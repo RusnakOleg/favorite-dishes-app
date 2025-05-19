@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Dishes from './pages/Dishes';
 import DishDetails from './pages/DishDetails';
 import AddDish from './pages/AddDish';
+import EditDish from './pages/EditDish';
 import { AnimatePresence } from 'framer-motion';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="/dishes" element={<Dishes />} />
             <Route path="/dishes/:id" element={<DishDetails />} />
             <Route path="/add" element={<AddDish />} />
+            <Route path="/edit/:id" element={<EditDish />} />
           </Routes>
         </AnimatePresence>
       </main>

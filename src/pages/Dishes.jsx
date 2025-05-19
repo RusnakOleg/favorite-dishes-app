@@ -125,6 +125,7 @@ export default function Dishes() {
             >
               Видалити ✖
             </button>
+            <Link to={`/edit/${dish.id}`} className="absolute bottom-2 right-2 text-sm text-blue-500 hover:text-blue-700">Редагувати ✎</Link>
           </motion.li>
         ))}
       </ul>
