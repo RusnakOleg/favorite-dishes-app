@@ -11,6 +11,7 @@ export default function Dishes() {
   });
   const [filter, setFilter] = useState('Усі');
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('desc');
 
   useEffect(() => {
     localStorage.setItem('dishes', JSON.stringify(dishes));
@@ -23,18 +24,31 @@ export default function Dishes() {
     }
   };
 
-  const filtered = dishes.filter(d => {
-    const matchCategory = filter === 'Усі' || d.category === filter;
-    const matchSearch = d.name.toLowerCase().includes(search.toLowerCase());
-    return matchCategory && matchSearch;
-  });
+  const handleRating = (id, value) => {
+    const updated = dishes.map(d =>
+      d.id === id ? { ...d, rating: value } : d
+    );
+    setDishes(updated);
+  };
+
+  const filtered = dishes
+    .filter(d => {
+      const matchCategory = filter === 'Усі' || d.category === filter;
+      const matchSearch = d.name.toLowerCase().includes(search.toLowerCase());
+      return matchCategory && matchSearch;
+    })
+    .sort((a, b) => {
+      const ra = a.rating || 0;
+      const rb = b.rating || 0;
+      return sort === 'asc' ? ra - rb : rb - ra;
+    });
 
   useEffect(() => {
     if (!localStorage.getItem('dishes')) {
       const initial = [
-        { id: 1, name: 'Омлет з сиром', category: 'Сніданок', ingredients: 'Яйця, сир, сіль', description: 'Смачний білковий сніданок' },
-        { id: 2, name: 'Борщ', category: 'Обід', ingredients: 'Буряк, капуста, м\'ясо', description: 'Традиційна українська страва' },
-        { id: 3, name: 'Наполеон', category: 'Десерт', ingredients: 'Тісто, крем', description: 'Солодкий листковий торт' },
+        { id: 1, name: 'Омлет з сиром', category: 'Сніданок', ingredients: 'Яйця, сир, сіль', description: 'Смачний білковий сніданок', rating: 4 },
+        { id: 2, name: 'Борщ', category: 'Обід', ingredients: 'Буряк, капуста, м\'ясо', description: 'Традиційна українська страва', rating: 5 },
+        { id: 3, name: 'Наполеон', category: 'Десерт', ingredients: 'Тісто, крем', description: 'Солодкий листковий торт', rating: 3 },
       ];
       setDishes(initial);
       localStorage.setItem('dishes', JSON.stringify(initial));
@@ -65,6 +79,16 @@ export default function Dishes() {
             className="border border-orange-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
+        <div>
+          <label className="block mb-1 text-gray-700 font-medium">Сортування за рейтингом:</label>
+          <select
+            onChange={e => setSort(e.target.value)}
+            className="border border-orange-300 p-2 rounded w-52 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option value="desc">Від вищого до нижчого</option>
+            <option value="asc">Від нижчого до вищого</option>
+          </select>
+        </div>
       </div>
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filtered.map(dish => (
@@ -80,7 +104,21 @@ export default function Dishes() {
             <Link to={`/dishes/${dish.id}`} className="text-xl font-semibold text-orange-800 dark:text-orange-300 hover:underline block mb-2">
               {dish.name}
             </Link>
-            <p className="text-sm text-gray-500 dark:text-gray-300 mb-3">Категорія: {dish.category}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">Категорія: {dish.category}</p>
+            <div className="mb-3 flex gap-1">
+              {[1, 2, 3, 4, 5].map(n => (
+                <button
+                  key={n}
+                  onClick={() => handleRating(dish.id, n)}
+                  className={
+                    (dish.rating || 0) >= n
+                      ? 'text-yellow-400' : 'text-gray-300'
+                  }
+                >
+                  ★
+                </button>
+              ))}
+            </div>
             <button
               onClick={() => handleDelete(dish.id)}
               className="absolute top-2 right-2 text-sm text-red-500 hover:text-red-700"
