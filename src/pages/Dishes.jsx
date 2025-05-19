@@ -1,11 +1,31 @@
 // pages/Dishes.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { initialDishes, categories } from '../data';
+import { categories } from '../data';
+import { motion } from 'framer-motion';
 
 export default function Dishes() {
+  const [dishes, setDishes] = useState(() => {
+    const saved = localStorage.getItem('dishes');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [filter, setFilter] = useState('Усі');
-  const filtered = filter === 'Усі' ? initialDishes : initialDishes.filter(d => d.category === filter);
+
+  useEffect(() => {
+    localStorage.setItem('dishes', JSON.stringify(dishes));
+  }, [dishes]);
+
+  const filtered = filter === 'Усі' ? dishes : dishes.filter(d => d.category === filter);
+
+  useEffect(() => {
+    if (dishes.length === 0) {
+      setDishes([
+        { id: 1, name: 'Омлет з сиром', category: 'Сніданок', ingredients: 'Яйця, сир, сіль', description: 'Смачний білковий сніданок' },
+        { id: 2, name: 'Борщ', category: 'Обід', ingredients: 'Буряк, капуста, м`ясо', description: 'Традиційна українська страва' },
+        { id: 3, name: 'Наполеон', category: 'Десерт', ingredients: 'Тісто, крем', description: 'Солодкий листковий торт' },
+      ]);
+    }
+  }, []);
 
   return (
     <div className="p-6">
@@ -19,10 +39,18 @@ export default function Dishes() {
       </div>
       <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {filtered.map(dish => (
-          <li key={dish.id} className="bg-white rounded shadow hover:shadow-lg transition p-4 border border-orange-100">
+          <motion.li
+            key={dish.id}
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white rounded shadow hover:shadow-lg transition p-4 border border-orange-100"
+          >
             <Link to={`/dishes/${dish.id}`} className="text-xl font-semibold text-orange-800 hover:underline">{dish.name}</Link>
             <p className="text-sm text-gray-500 mt-1">Категорія: {dish.category}</p>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </div>

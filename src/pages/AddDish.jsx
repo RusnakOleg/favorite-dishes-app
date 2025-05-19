@@ -9,7 +9,10 @@ export default function AddDish() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    alert(`Страва "${form.name}" додана (насправді поки не зберігається).`);
+    const newDish = { ...form, id: Date.now() };
+    const existing = JSON.parse(localStorage.getItem('dishes')) || [];
+    localStorage.setItem('dishes', JSON.stringify([...existing, newDish]));
+    alert(`Страва "${form.name}" додана!`);
     setForm({ name: '', category: '', ingredients: '', description: '' });
   };
 
