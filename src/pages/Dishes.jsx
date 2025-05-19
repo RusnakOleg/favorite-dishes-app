@@ -119,13 +119,21 @@ export default function Dishes() {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => handleDelete(dish.id)}
-              className="absolute top-2 right-2 text-sm text-red-500 hover:text-red-700"
-            >
-              Видалити ✖
-            </button>
-            <Link to={`/edit/${dish.id}`} className="absolute bottom-2 right-2 text-sm text-blue-500 hover:text-blue-700">Редагувати ✎</Link>
+            <div className="absolute top-2 right-2 flex gap-2">
+  <button
+    onClick={() => handleDelete(dish.id)}
+    className="bg-red-100 text-red-600 hover:bg-red-200 px-2 py-1 rounded text-sm"
+  >
+    ✖ Видалити
+  </button>
+  <Link
+    to={`/edit/${dish.id}`}
+    className="bg-blue-100 text-blue-600 hover:bg-blue-200 px-2 py-1 rounded text-sm"
+  >
+    ✏️ Редагувати
+  </Link>
+</div>
+
           </motion.li>
         ))}
       </ul>
